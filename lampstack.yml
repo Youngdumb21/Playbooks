@@ -1,20 +1,17 @@
 ﻿---
-- name: install apache & php & mysql
-  hosts: 52.72.41.245
-  become: true
+- hosts: 34.224.223.103
+  sudo: true
+  vars:
+   packages: ['vim', 'git', 'curl']
   tasks:
-    - name: "Install apache2"
-      package: name=apache2 state=present
-    - name: "Install apache2-php5"
-      package: name=libapache2-mod-php state=present
-    - name: "Install php-cli"
-      package: name=php-cli state=present
-    - name: "Install php-gd"
-      package: name=php-gd state=present
-    - name: "Install php-mysql"
-      package: php.mysql state=present
-    - name: "Install mysqlserver"
-      package: name=mysql.server state=present
-    - name: "Install tomcat8"
-      package: name=tomcat8 state=present
+- name: Install Package
+  apt: name={{ item }} state=latest
+  with_items: packages
+- name: Install httpd Package
+  yum: name=httpd state=latest
+- name: Copy httpd configuration file
+  copy: src=/data/httpd.original dest=/etc/httpd/conf/httpd.conf
+- name: Start and Enable httpd service
+  service: name=httpd state=restarted enabled=yes
 ...
+
